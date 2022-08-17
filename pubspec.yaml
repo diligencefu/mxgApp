@@ -41,7 +41,7 @@ dependencies:
   event_bus: ^2.0.0  
   bot_toast: ^4.0.2
   pull_to_refresh_flutter3: ^2.0.1
-  webview_flutter: ^3.0.4
+  # webview_flutter: ^3.0.4
 
 
   device_info_plus: ^4.0.1
@@ -49,13 +49,13 @@ dependencies:
     git:
       url: https://github.com/kevincaicedo/imei_plugin.git
 
+  flutter_webview_plugin: 
+    git:
+      url: https://github.com/flutterbest/flutter_webview_plugin.git
 
   platform_device_id: ^1.0.1
   install_referrer: ^1.2.1
   flutter_native_timezone: ^2.0.0
-
-  # timesdk_plugin_demo:
-  #   path: ./timesdk_plugin_demo-master
 
 dev_dependencies:
   flutter_test:

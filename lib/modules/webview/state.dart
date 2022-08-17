@@ -1,10 +1,11 @@
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class WebviewState {
-   String? title;
-   String? url;
-   late WebViewController controller;
-   WebviewState() {
+  String? title;
+  String? url;
+  final flutterWebViewPlugin = FlutterWebviewPlugin();
+
+  WebviewState() {
     ///Initialize variables
   }
 }

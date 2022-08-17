@@ -75,8 +75,8 @@ class WebviewLogic extends GetxController {
 
   void callH5(String callbackName, Map<String, dynamic> callbackMap) {
     logger("$callbackName(${json.encode(callbackMap)})");
-    state.controller
-        .runJavascript("$callbackName(${json.encode(callbackMap)})");
+    state.flutterWebViewPlugin
+        .evalJavascript("$callbackName(${json.encode(callbackMap)})");
   }
 
   @override
@@ -108,13 +108,5 @@ class WebviewLogic extends GetxController {
       "callback": "webViewToTime"
     };
     channel.invokeMethod('collectMessage', json.encode(param));
-  }
-
-  void call_H5(String callbackName, Map<String, dynamic> callbackMap) {
-    logger("==== call h5 ==== \n "
-        "callback: $callbackName, \n "
-        "callbackMap: $callbackMap \n =============");
-    state.controller
-        .runJavascript("$callbackName(${json.encode(callbackMap)})");
   }
 }
