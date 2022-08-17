@@ -71,15 +71,13 @@ class WebviewPage extends StatelessWidget {
         onMessageReceived: (JavascriptMessage message) async {
           var data = jsonDecode(message.message);
           var action = data["action"];
-          print(data.toString() + "xxxxxxxxxxxxxxxx");
-          print(action + " yyyyyyyyy");
+          // logger(data.toString());
+          logger(action);
           switch (action) {
             case "getLoginInfo":
               var token = SpUtil.getString(CacheConstants.token) ?? "";
               data['data'] = {"token": token};
-              print(token + "5444444");
               Map<String, dynamic> callbackMap = data;
-
               callH5('webViewToLogin', callbackMap);
               break;
             case "toLogin":
@@ -142,23 +140,6 @@ class WebviewPage extends StatelessWidget {
                 return;
               }
               Get.find<WebviewLogic>().collectMessage(data);
-              // var params = {
-              //   "action": "timeSDK",
-              //   "id": "0.6656999111432877",
-              //   "data": {
-              //     "orderNo": data["data"]["orderNo"].toString(),
-              //     "userId": SpUtil.getString(CacheConstants.userId),
-              //     "isSubmit": data["data"]["isSubmit"],
-              //     "appList": false,
-              //     "sms": false,
-              //     "exif": false,
-              //     "device": false,
-              //     "contact": false,
-              //     "location": false
-              //   },
-              //   "callback": "webViewToTime"
-              // };
-              // callH5("webViewToTime", params);
               break;
             default:
           }

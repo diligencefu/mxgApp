@@ -4,7 +4,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_quick/config/config.dart';
 import 'package:flutter_quick/constants/cache.dart';
 import 'package:flutter_quick/http/dio_api.dart';
-import 'package:flutter_quick/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sp_util/sp_util.dart';
@@ -134,5 +133,20 @@ class UserRepository {
         return null;
       }
     }
+  }
+
+  /// 上传
+  static Future uploadZip(dynamic params, dynamic formData) async {
+    var resp = await DioApi.getInstance().post(
+      'time/upload/zip6in1',
+      queryParameters: params,
+      data: formData,
+    );
+    EasyLoading.dismiss();
+    if (resp.sucess) {
+      return resp.data;
+    }
+    toast(resp.message);
+    return null;
   }
 }
