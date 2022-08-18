@@ -28,8 +28,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  cupertino_icons: ^1.0.5
-  intl: ^0.17.0
   dio: ^4.0.6
   flutter_screenutil: ^5.5.3+2
   flutter_easyloading: ^3.0.5
@@ -38,18 +36,12 @@ dependencies:
   sp_util: ^2.0.3
   url_launcher: ^6.1.4
   permission_handler: ^9.2.0
-  path_provider: ^2.0.11
   logger: ^1.1.0
   package_info_plus: ^1.4.2
-  event_bus: ^2.0.0
-  get_it: ^7.2.0
-  # json_annotation: ^4.5.0
-  
+  event_bus: ^2.0.0  
   bot_toast: ^4.0.2
-  
   pull_to_refresh_flutter3: ^2.0.1
-  # flutter_inappwebview: ^5.4.3+7
-  webview_flutter: ^3.0.4
+  # webview_flutter: ^3.0.4
 
 
   device_info_plus: ^4.0.1
@@ -57,12 +49,13 @@ dependencies:
     git:
       url: https://github.com/kevincaicedo/imei_plugin.git
 
+  flutter_webview_plugin: 
+    git:
+      url: https://github.com/flutterbest/flutter_webview_plugin.git
+
   platform_device_id: ^1.0.1
   install_referrer: ^1.2.1
   flutter_native_timezone: ^2.0.0
-
-  # timesdk_plugin_demo:
-  #   path: ./timesdk_plugin_demo-master
 
 dev_dependencies:
   flutter_test:

@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_quick/constants/cache.dart';
-import 'package:get/get.dart';
 import 'package:sp_util/sp_util.dart';
-// import 'package:timesdk_plugin/timesdk_plugin.dart';
+import '../../constants/cache.dart';
+import '../../repository/user_repository.dart';
 import '../../utils/helper.dart';
 import 'state.dart';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 
 class WebviewLogic extends GetxController {
   final WebviewState state = WebviewState();
@@ -26,49 +27,56 @@ class WebviewLogic extends GetxController {
       // logger("接收到call: ${call.method} arguments: ${call.arguments}");
 
       var callbackName = "webViewToTime";
-      // var callbackMap = {
-      //   "action": "timeSDK",
-      //   "result": "fail",
-      //   "msg": "",
-      //   "id": call.arguments["json"]["id"],
-      //   "data": ""
-      // };
       var arguments = call.arguments;
 
-      var result = "";
-      if (call.method == "onTimeFailCallBack") {
-        result = "fail";
-      } else {
-        result = "success";
-      }
-
-      print(arguments.toString() + "999999");
-      var callbackMap = {
-        "action": "timeSDK",
-        "result": result,
-        "msg": "",
-        "id": data["id"].toString(),
-        "data": {
-          "orderNo": data["data"]["orderNo"].toString(),
-          "userId": SpUtil.getString(CacheConstants.userId),
-          "isSubmit": data["data"]["isSubmit"],
-          "appList": data["data"]["appList"],
-          "sms": data["data"]["appList"],
-          "exif": data["data"]["exif"],
-          "device": data["data"]["device"],
-          "contact": data["data"]["contact"],
-          "location": data["data"]["location"]
-        },
-        "callback": "webViewToTime"
-      };
-      callH5(callbackName, callbackMap);
+      var path = arguments['file'];
+      String fileName = path.split('/').last;
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          path,
+          filename: fileName,
+        )
+      });
+      UserRepository.uploadZip(
+              {'md5': arguments['md5'], 'orderNo': arguments['orderNo']},
+              formData)
+          .then((value) {
+        logger(value);
+        if (value != null && arguments['isSubmit'] == true) {
+          var result = "";
+          if (call.method == "onTimeFailCallBack") {
+            result = "fail";
+          } else {
+            result = "success";
+          }
+          var callbackMap = {
+            "action": "timeSDK",
+            "result": result,
+            "msg": "",
+            "id": data["id"].toString(),
+            "data": {
+              "orderNo": data["data"]["orderNo"].toString(),
+              "userId": SpUtil.getString(CacheConstants.userId),
+              "isSubmit": data["data"]["isSubmit"],
+              "appList": data["data"]["appList"],
+              "sms": data["data"]["appList"],
+              "exif": data["data"]["exif"],
+              "device": data["data"]["device"],
+              "contact": data["data"]["contact"],
+              "location": data["data"]["location"]
+            },
+            "callback": callbackName
+          };
+          callH5(callbackName, callbackMap);
+        }
+      });
     });
   }
 
   void callH5(String callbackName, Map<String, dynamic> callbackMap) {
     logger("$callbackName(${json.encode(callbackMap)})");
-    state.controller
-        .runJavascript("$callbackName(${json.encode(callbackMap)})");
+    state.flutterWebViewPlugin
+        .evalJavascript("$callbackName(${json.encode(callbackMap)})");
   }
 
   @override
@@ -100,13 +108,5 @@ class WebviewLogic extends GetxController {
       "callback": "webViewToTime"
     };
     channel.invokeMethod('collectMessage', json.encode(param));
-  }
-
-  void call_H5(String callbackName, Map<String, dynamic> callbackMap) {
-    logger("==== call h5 ==== \n "
-        "callback: $callbackName, \n "
-        "callbackMap: $callbackMap \n =============");
-    state.controller
-        .runJavascript("$callbackName(${json.encode(callbackMap)})");
   }
 }
