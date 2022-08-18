@@ -170,7 +170,7 @@ class WebviewPage extends StatelessWidget {
       'appName': "SmartLoan",
       'afid': "0",
       'packageName': "com.mmt.smartloan",
-      'androidId': build.androidId.toString(),
+      'androidId': '',
     };
   }
 }
