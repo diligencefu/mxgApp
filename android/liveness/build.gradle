@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 28
+        vectorDrawables.useSupportLibrary = true
+
+    }
+
+//    buildTypes {
+//        debug {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            matchingFallbacks = ['release', 'preview', 'debug']
+//        }
+//        release {
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            matchingFallbacks = ['release', 'preview', 'debug']
+//        }
+//    }
+
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    api(name: 'guardian_core_v3.0', ext: 'aar')
+    api(name: 'liveness_lib_v1.3.5', ext: 'aar')
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+}
