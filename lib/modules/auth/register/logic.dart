@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_quick/modules/webview/logic.dart';
 import 'package:flutter_quick/repository/user_repository.dart';
-import 'package:flutter_quick/routes/routes.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:sp_util/sp_util.dart';
-import '../../../constants/cache.dart';
 import 'state.dart';
 
 import 'package:platform_device_id/platform_device_id.dart';
@@ -64,10 +59,10 @@ class RegisterLogic extends GetxController {
   }
 
   submit() async {
-    var result = await InstallReferrer.app;
+    // var result = await InstallReferrer.app;
     var mac = await PlatformDeviceId.getDeviceId;
     var deviceData =
-        _readAndroidBuildData(await deviceInfoPlugin.androidInfo, result);
+        _readAndroidBuildData(await deviceInfoPlugin.androidInfo, null);
     deviceData["mac"] = mac.toString();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     deviceData["appVersion"] = packageInfo.version;
@@ -95,7 +90,7 @@ class RegisterLogic extends GetxController {
   }
 
   Map<String, String> _readAndroidBuildData(
-      AndroidDeviceInfo build, InstallationApp result) {
+      AndroidDeviceInfo build, dynamic result) {
     var phone = Get.arguments["phone"];
     var smsCode = state.controller1.text;
     if (smsCode.isEmpty) {
@@ -109,11 +104,12 @@ class RegisterLogic extends GetxController {
       'channelId': "SmartLoan",
       'appName': "SmartLoan",
       'packageName': "com.mmt.smartloan",
-      'androidId': build.androidId.toString(),
+      'androidId': '',
       'releaseDate': build.version.securityPatch.toString(),
       'isRooted': "false",
       'timeZoneId': "",
-      "installReferce": referrerToReadableString(result.referrer),
+      // "installReferce": referrerToReadableString(result.referrer),
+      "installReferce": "",
       'verified': true.toString()
     };
   }

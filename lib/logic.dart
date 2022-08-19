@@ -1,4 +1,3 @@
-import 'package:flutter_quick/repository/user_repository.dart';
 import 'package:flutter_quick/state.dart';
 import 'package:get/get.dart';
 import 'package:sp_util/sp_util.dart';

@@ -12,8 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 ///
 ///
 logger(dynamic message, {Level level = Level.debug}) {
-  var logger = Logger();
-  logger.log(level, message);
+  Get.log(message);
 }
 
 /// showToast二次封装

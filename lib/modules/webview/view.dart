@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sp_util/sp_util.dart';
+
 import 'logic.dart';
 
 class WebviewPage extends StatelessWidget {
@@ -59,12 +60,11 @@ class WebviewPage extends StatelessWidget {
           onMessageReceived: (JavascriptMessage message) async {
             // logger(message.message.runtimeType);
             // logger(message.message);
-            print(message.message.toString());
 
             var data = jsonDecode(message.message);
-            logger(data);
             var action = data["action"];
-            logger(action);
+            Get.log(">>>>>>>>${message.message}---${action}");
+
             switch (action) {
               case "getLoginInfo":
                 var token = SpUtil.getString(CacheConstants.token) ?? "";
@@ -144,7 +144,7 @@ class WebviewPage extends StatelessWidget {
       'appName': "SmartLoan",
       'afid': "0",
       'packageName': "com.mmt.smartloan",
-      'androidId': build.androidId.toString(),
+      'androidId': '',
     };
   }
 }
