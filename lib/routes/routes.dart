@@ -19,6 +19,7 @@ class Routes {
 
   /// 初始化路由
   static String initialRoute = webview;
+  // static String initialRoute = login;
 
   static final pages = [
     GetPage(name: login, page: () => LoginPage()),

@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sp_util/sp_util.dart';
+import 'package:liveness_plugin/liveness_plugin.dart';
 
 import 'logic.dart';
 
@@ -63,22 +64,22 @@ class WebviewPage extends StatelessWidget {
 
             var data = jsonDecode(message.message);
             var action = data["action"];
-            Get.log(">>>>>>>>${message.message}---${action}");
+            // Get.log(">>>>>>>>${message.message}---${action}");
+            Get.log(">>>>>>>>${action}");
 
             switch (action) {
               case "getLoginInfo":
                 var token = SpUtil.getString(CacheConstants.token) ?? "";
+                if (token.isEmpty) {
+                  toLoginPage(data);
+                  return;
+                }
                 data['data'] = {"token": token};
                 Map<String, dynamic> callbackMap = data;
                 callH5('webViewToLogin', callbackMap);
                 break;
               case "toLogin":
-                Get.toNamed(Routes.login)?.then((value) {
-                  var token = SpUtil.getString(CacheConstants.token);
-                  data['data'] = {"token": token};
-                  Map<String, dynamic> callbackMap = data;
-                  callH5('webViewToLogin', callbackMap);
-                });
+                toLoginPage(data);
                 break;
               case "getPackageName":
                 var deviceData =
@@ -102,29 +103,24 @@ class WebviewPage extends StatelessWidget {
               case "getVersionName":
                 PackageInfo packageInfo = await PackageInfo.fromPlatform();
                 data['data'] = {"versionName": packageInfo.version};
-
                 Map<String, dynamic> callbackMap = data;
-
                 callH5('webViewVersionName', callbackMap);
                 break;
               case "logout":
                 print("logout xxxxxxxxx");
                 SpUtil.remove(CacheConstants.token);
                 callH5('webViewLoginOut', {});
-                Get.toNamed(Routes.login)?.then((value) {
-                  print("++++++++++");
-                  var token = SpUtil.getString(CacheConstants.token);
-                  data['data'] = {"token": token};
-                  data["callback"] = "webViewToLogin";
-                  Map<String, dynamic> callbackMap = data;
-                  callH5('webViewToLogin', callbackMap);
-                });
+                toLoginPage(data);
                 break;
               case "logEventByLocal":
                 PackageInfo packageInfo = await PackageInfo.fromPlatform();
                 data['data'] = {"versionName": packageInfo.version};
                 Map<String, dynamic> callbackMap = data;
-                callH5('logEventByLocal', callbackMap);
+                break;
+              case "logEventByAF":
+                PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                data['data'] = {"versionName": packageInfo.version};
+                Map<String, dynamic> callbackMap = data;
                 break;
 
               case "timeSDK":
@@ -133,10 +129,46 @@ class WebviewPage extends StatelessWidget {
                 }
                 Get.find<WebviewLogic>().collectMessage(data);
                 break;
+
+              case "getAccuauthSDK":
+                Get.log(">>>>>>>>${message.message}---${action}");
+                _checkLicense(data);
+                break;
+
+              case "setNewToken":
+                SpUtil.putString(CacheConstants.token, data["token"]);
+                data["callback"] = "setNewToken";
+                Map<String, dynamic> callbackMap = data;
+                callH5('setNewToken', callbackMap);
+                break;
               default:
             }
           })
     ].toSet();
+  }
+
+  toLoginPage(dynamic data) {
+    Get.log(">>>>>>>> to login page");
+    Get.toNamed(Routes.permission)?.then((value) {
+      var token = SpUtil.getString(CacheConstants.token);
+      data['data'] = {"token": token};
+      data["callback"] = "webViewToLogin";
+      Map<String, dynamic> callbackMap = data;
+      callH5('webViewToLogin', callbackMap);
+    });
+  }
+
+  void _checkLicense(dynamic data) async {
+    // LivenessPlugin.startLivenessDetection(this);
+    String license = "";
+    String result = await LivenessPlugin.setLicenseAndCheck(license);
+    print(result);
+    if ("SUCCESS" == result) {
+      // license is valid
+
+    } else {
+      // license is invalid, expired/format error /appId is invalid
+    }
   }
 
   Map<String, String> _readAndroidBuildData(AndroidDeviceInfo build) {

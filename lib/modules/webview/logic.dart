@@ -8,6 +8,7 @@ import '../../utils/helper.dart';
 import 'state.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
+import 'package:liveness_plugin/liveness_plugin.dart';
 
 class WebviewLogic extends GetxController {
   final WebviewState state = WebviewState();
@@ -23,6 +24,9 @@ class WebviewLogic extends GetxController {
     }
     super.onInit();
 
+    LivenessPlugin.initSDK(
+        '54e03a28ec301bb8', '36181f76c174e848', Market.Mexico);
+// LivenessPlugin.startLivenessDetection(this);
     channel.setMethodCallHandler((call) async {
       // logger("接收到call: ${call.method} arguments: ${call.arguments}");
 

@@ -118,7 +118,7 @@ class UserRepository {
     request.bodyFields = data;
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
-    logger(response.statusCode);
+    logger(response.statusCode.toString());
     if (response.statusCode == 200) {
       var data = await response.stream.bytesToString();
       var res = jsonDecode(data);
