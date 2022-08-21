@@ -18,7 +18,7 @@ class PolicyWidget extends StatefulWidget {
 }
 
 class _PolicyWidgetState extends State<PolicyWidget> {
-  bool _checked = false;
+  bool _checked = true;
 
   void _onChecked() {
     setState(() {

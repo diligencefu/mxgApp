@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:sp_util/sp_util.dart';
 import '../../constants/cache.dart';
 import '../../repository/user_repository.dart';
@@ -10,10 +12,31 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:liveness_plugin/liveness_plugin.dart';
 
-class WebviewLogic extends GetxController {
+class WebviewLogic extends GetxController with LivenessDetectionCallback {
   final WebviewState state = WebviewState();
   static const channel = MethodChannel("timesdk_plugin");
   dynamic data;
+
+  @override
+  void onGetDetectionResult(bool isSuccess, Map resultMap) {
+    var params = data;
+    if (!isSuccess) {
+      params["result"] = "fail";
+      params["msg"] = resultMap["message"];
+      params["data"] = {"errorMsg": resultMap["message"]};
+      Map<String, dynamic> callbackMap = params;
+      callH5("webViewFaceImg", callbackMap);
+      return;
+    }
+    String image = resultMap["base64Image"];
+
+    params["data"]["livenessId"] = resultMap["resultMap"];
+    params["data"]["file"] = image;
+    params["result"] = "ok";
+    Map<String, dynamic> callbackMap = params;
+    callH5("webViewFaceImg", callbackMap);
+  }
+
   @override
   void onInit() {
     var arg = Get.arguments;
@@ -26,7 +49,6 @@ class WebviewLogic extends GetxController {
 
     LivenessPlugin.initSDK(
         '54e03a28ec301bb8', '36181f76c174e848', Market.Mexico);
-// LivenessPlugin.startLivenessDetection(this);
     channel.setMethodCallHandler((call) async {
       // logger("接收到call: ${call.method} arguments: ${call.arguments}");
 
@@ -81,6 +103,11 @@ class WebviewLogic extends GetxController {
     logger("$callbackName(${json.encode(callbackMap)})");
     state.flutterWebViewPlugin
         .evalJavascript("$callbackName(${json.encode(callbackMap)})");
+  }
+
+  void callLivenessDetection(dynamic parmas) {
+    data = parmas;
+    LivenessPlugin.startLivenessDetection(this);
   }
 
   @override

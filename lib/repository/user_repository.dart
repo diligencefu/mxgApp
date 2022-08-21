@@ -122,7 +122,7 @@ class UserRepository {
     if (response.statusCode == 200) {
       var data = await response.stream.bytesToString();
       var res = jsonDecode(data);
-      print(res);
+      logger(res);
       if (res["code"].toString() == "0") {
         SpUtil.putString(CacheConstants.token, res["data"]["token"]);
         SpUtil.putString(CacheConstants.userId, res["data"]["userId"]);

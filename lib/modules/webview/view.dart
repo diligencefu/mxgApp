@@ -12,6 +12,8 @@ import 'package:imei_plugin/imei_plugin.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:liveness_plugin/liveness_plugin.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'logic.dart';
 
@@ -25,7 +27,7 @@ class WebviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<WebviewLogic>(builder: (logic) {
       return WebviewScaffold(
-        url: state.url ?? "http://8.134.38.88:3003/#/",
+        url: state.url,
         javascriptChannels: _alertJavascriptChannel(context),
         mediaPlaybackRequiresUserGesture: false,
         appBar: state.title == null
@@ -107,7 +109,6 @@ class WebviewPage extends StatelessWidget {
                 callH5('webViewVersionName', callbackMap);
                 break;
               case "logout":
-                print("logout xxxxxxxxx");
                 SpUtil.remove(CacheConstants.token);
                 callH5('webViewLoginOut', {});
                 toLoginPage(data);
@@ -131,15 +132,29 @@ class WebviewPage extends StatelessWidget {
                 break;
 
               case "getAccuauthSDK":
-                Get.log(">>>>>>>>${message.message}---${action}");
-                _checkLicense(data);
+                logic.callLivenessDetection(data);
                 break;
-
               case "setNewToken":
                 SpUtil.putString(CacheConstants.token, data["token"]);
                 data["callback"] = "setNewToken";
                 Map<String, dynamic> callbackMap = data;
                 callH5('setNewToken', callbackMap);
+                break;
+              case "selectContact":
+                final PhoneContact contact =
+                    await FlutterContactPicker.pickPhoneContact();
+                data["data"]["name"] = contact.fullName;
+                data["data"]["phone"] = contact.phoneNumber?.number;
+                data["result"] = "ok";
+                Map<String, dynamic> callbackMap = data;
+                callH5('getWebViewSelectContact', callbackMap);
+                break;
+              case 'ToWhatsapp':
+                break;
+              case 'toGooglePlayer':
+                if (data["downloadLink"].toString().isNotEmpty) {
+                  launch(data["downloadLink"]);
+                }
                 break;
               default:
             }
@@ -148,8 +163,7 @@ class WebviewPage extends StatelessWidget {
   }
 
   toLoginPage(dynamic data) {
-    Get.log(">>>>>>>> to login page");
-    Get.toNamed(Routes.permission)?.then((value) {
+    Get.offAllNamed(Routes.login)?.then((value) {
       var token = SpUtil.getString(CacheConstants.token);
       data['data'] = {"token": token};
       data["callback"] = "webViewToLogin";

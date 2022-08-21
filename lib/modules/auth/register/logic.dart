@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quick/repository/user_repository.dart';
+import 'package:flutter_quick/routes/routes.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'state.dart';
@@ -82,8 +83,7 @@ class RegisterLogic extends GetxController {
     print(deviceData);
     UserRepository.login(deviceData).then((value) {
       if (value != null) {
-        Get.back();
-        Get.back();
+        Get.offAllNamed(Routes.webview);
       }
     });
     // Get.toNamed(Routes.permission);
