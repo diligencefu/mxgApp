@@ -63,7 +63,6 @@ class WebviewPage extends StatelessWidget {
           onMessageReceived: (JavascriptMessage message) async {
             // logger(message.message.runtimeType);
             // logger(message.message);
-
             var data = jsonDecode(message.message);
             var action = data["action"];
             // Get.log(">>>>>>>>${message.message}---${action}");
@@ -170,19 +169,6 @@ class WebviewPage extends StatelessWidget {
       Map<String, dynamic> callbackMap = data;
       callH5('webViewToLogin', callbackMap);
     });
-  }
-
-  void _checkLicense(dynamic data) async {
-    // LivenessPlugin.startLivenessDetection(this);
-    String license = "";
-    String result = await LivenessPlugin.setLicenseAndCheck(license);
-    print(result);
-    if ("SUCCESS" == result) {
-      // license is valid
-
-    } else {
-      // license is invalid, expired/format error /appId is invalid
-    }
   }
 
   Map<String, String> _readAndroidBuildData(AndroidDeviceInfo build) {

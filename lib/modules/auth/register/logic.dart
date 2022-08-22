@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quick/repository/user_repository.dart';
 import 'package:flutter_quick/routes/routes.dart';
+import 'package:flutter_quick/utils/helper.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'state.dart';
@@ -12,6 +13,8 @@ import 'package:platform_device_id/platform_device_id.dart';
 import 'package:imei_plugin/imei_plugin.dart';
 import 'package:install_referrer/install_referrer.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:sp_util/sp_util.dart';
+import 'package:flutter_quick/constants/cache.dart';
 
 class RegisterLogic extends GetxController {
   final state = RegisterState();
@@ -45,7 +48,7 @@ class RegisterLogic extends GetxController {
   }
 
   sendSms() {
-    var phone = Get.arguments["phone"];
+    var phone = Get.arguments["mobile"];
     if (state.seconds != 60) return;
 
     UserRepository.sendSmsCode(phone).then((value) {
@@ -80,18 +83,37 @@ class RegisterLogic extends GetxController {
 
     var timezone = await FlutterNativeTimezone.getLocalTimezone();
     deviceData["timeZone"] = timezone;
-    print(deviceData);
+    var method = "register";
+    if (Get.arguments["existed"] == true) {
+      method = "login";
+    } else {
+      deviceData.remove("appName");
+      deviceData.remove("releaseDate");
+      deviceData.remove("isRooted");
+      deviceData.remove("timeZoneId");
+      deviceData.remove("mac");
+      deviceData.remove("timeZone");
+      UserRepository.register(deviceData).then((value) {
+        if (value != null) {
+          SpUtil.putString(CacheConstants.token, value["token"]);
+          SpUtil.putString(CacheConstants.userId, value["userId"]);
+          SpUtil.putString(CacheConstants.mobile, Get.arguments["mobile"]);
+          Get.offAllNamed(Routes.webview);
+        }
+      });
+      return;
+    }
+    logger(deviceData);
     UserRepository.login(deviceData).then((value) {
       if (value != null) {
         Get.offAllNamed(Routes.webview);
       }
     });
-    // Get.toNamed(Routes.permission);
   }
 
   Map<String, String> _readAndroidBuildData(
       AndroidDeviceInfo build, dynamic result) {
-    var phone = Get.arguments["phone"];
+    var phone = Get.arguments["mobile"];
     var smsCode = state.controller1.text;
     if (smsCode.isEmpty) {
       return {};

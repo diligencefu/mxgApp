@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import 'state.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:liveness_plugin/liveness_plugin.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class WebviewLogic extends GetxController with LivenessDetectionCallback {
   final WebviewState state = WebviewState();
@@ -28,13 +30,11 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
       callH5("webViewFaceImg", callbackMap);
       return;
     }
-    String image = resultMap["base64Image"];
+    String base64Image = resultMap["base64Image"];
 
-    params["data"]["livenessId"] = resultMap["resultMap"];
-    params["data"]["file"] = image;
-    params["result"] = "ok";
-    Map<String, dynamic> callbackMap = params;
-    callH5("webViewFaceImg", callbackMap);
+    Uint8List bytes = base64.decode(base64Image);
+
+    compressList(bytes, data, resultMap);
   }
 
   @override
@@ -139,5 +139,28 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
       "callback": "webViewToTime"
     };
     channel.invokeMethod('collectMessage', json.encode(param));
+  }
+
+  /// 图片压缩 File -> Uint8List
+  void compressList(Uint8List bytes, dynamic data, Map resultMap) async {
+    var params = data;
+    var result = await FlutterImageCompress.compressWithList(
+      bytes,
+      minWidth: 256,
+      minHeight: 256,
+      quality: 30,
+      rotate: 90,
+    );
+    params["data"]["livenessId"] = resultMap["resultMap"];
+    params["data"]["file"] = uint8ListTob64(result);
+    params["result"] = "ok";
+    Map<String, dynamic> callbackMap = params;
+    callH5("webViewFaceImg", callbackMap);
+  }
+
+  String uint8ListTob64(Uint8List uint8list) {
+    String base64String = base64Encode(uint8list);
+    String header = "data:image/png;base64,";
+    return header + base64String;
   }
 }

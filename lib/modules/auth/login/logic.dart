@@ -41,12 +41,13 @@ class LoginLogic extends GetxController {
       toast("请输入手机号");
       return;
     }
-    UserRepository.checkPhone(phone).then((value) {
-      if (value == null) {
+    UserRepository.checkPhone(phone).then((value1) {
+      logger(value1);
+      if (value1 == null) {
         return;
       }
       UserRepository.sendSmsCode(phone).then((value) {
-        Get.toNamed(Routes.register, arguments: {"phone": phone});
+        Get.toNamed(Routes.register, arguments: value1);
       });
     });
   }

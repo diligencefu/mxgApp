@@ -112,7 +112,7 @@ class UserRepository {
     };
     var request = http.Request(
       'POST',
-      Uri.parse('${Config.apiHost}/security/login'),
+      Uri.parse('${Config.apiHost}security/login'),
     );
 
     request.bodyFields = data;
@@ -133,6 +133,19 @@ class UserRepository {
         return null;
       }
     }
+  }
+
+  static Future register(Map<String, String> data) async {
+    var resp = await DioApi.getInstance().post(
+      'security/register',
+      data: data,
+    );
+    EasyLoading.dismiss();
+    if (resp.sucess) {
+      return resp.data;
+    }
+    toast(resp.message);
+    return null;
   }
 
   /// 上传
