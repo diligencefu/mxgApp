@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 //callback interface
@@ -117,11 +115,13 @@ class LivenessPlugin {
   }
 
   static void setDetectOcclusion(bool detectOcclusion) {
-    _channel.invokeMethod("setDetectOcclusion", {"detectOcclusion": detectOcclusion});
+    _channel.invokeMethod(
+        "setDetectOcclusion", {"detectOcclusion": detectOcclusion});
   }
 
   static void setResultPictureSize(int resultPictureSize) {
-    _channel.invokeMethod("setResultPictureSize", {"resultPictureSize": resultPictureSize});
+    _channel.invokeMethod(
+        "setResultPictureSize", {"resultPictureSize": resultPictureSize});
   }
 
   static void bindUser(String userId) {
