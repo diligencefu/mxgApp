@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 
 class RegisterState {
-  var controller1 = TextEditingController(text: "135790"); // 18161218432
+  var controller1 = TextEditingController(text: ""); // 18161218432
 
   RxBool agree = false.obs;
 

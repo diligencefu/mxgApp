@@ -52,6 +52,7 @@ class WebviewPage extends StatelessWidget {
         "callbackMap: $callbackMap \n =============");
     state.flutterWebViewPlugin
         .evalJavascript("$callbackName(${json.encode(callbackMap)})");
+    logger("$callbackName(${json.encode(callbackMap)})");
   }
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();

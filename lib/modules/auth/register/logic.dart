@@ -87,12 +87,12 @@ class RegisterLogic extends GetxController {
     if (Get.arguments["existed"] == true) {
       method = "login";
     } else {
-      deviceData.remove("appName");
-      deviceData.remove("releaseDate");
-      deviceData.remove("isRooted");
-      deviceData.remove("timeZoneId");
-      deviceData.remove("mac");
-      deviceData.remove("timeZone");
+      // deviceData.remove("appName");
+      // deviceData.remove("releaseDate");
+      // deviceData.remove("isRooted");
+      // deviceData.remove("timeZoneId");
+      // deviceData.remove("mac");
+      // deviceData.remove("timeZone");
       UserRepository.register(deviceData).then((value) {
         if (value != null) {
           SpUtil.putString(CacheConstants.token, value["token"]);
