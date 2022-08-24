@@ -63,6 +63,10 @@ class RegisterLogic extends GetxController {
   }
 
   submit() async {
+    var smsCode = state.controller1.text;
+    if (smsCode.length > 6) {
+      return;
+    }
     // var result = await InstallReferrer.app;
     var mac = await PlatformDeviceId.getDeviceId;
     var deviceData =

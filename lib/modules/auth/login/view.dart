@@ -86,6 +86,7 @@ class LoginPage extends StatelessWidget {
                             textAlign: TextAlign.left,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10) //限制长度
                             ],
                             decoration: InputDecoration(
                                 contentPadding:

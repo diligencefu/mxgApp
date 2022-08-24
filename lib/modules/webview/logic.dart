@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quick/routes/routes.dart';
 import 'package:logger/logger.dart';
 import 'package:sp_util/sp_util.dart';
 import '../../constants/cache.dart';
@@ -162,5 +163,15 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
     String base64String = base64Encode(uint8list);
     String header = "data:image/png;base64,";
     return header + base64String;
+  }
+
+  toLoginPage(dynamic data) {
+    Get.offAllNamed(Routes.login)?.then((value) {
+      var token = SpUtil.getString(CacheConstants.token);
+      data['data'] = {"token": token};
+      data["callback"] = "webViewToLogin";
+      Map<String, dynamic> callbackMap = data;
+      callH5('webViewToLogin', callbackMap);
+    });
   }
 }

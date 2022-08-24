@@ -41,6 +41,9 @@ class LoginLogic extends GetxController {
       toast("请输入手机号");
       return;
     }
+    if (phone.length > 10) {
+      return;
+    }
     UserRepository.checkPhone(phone).then((value1) {
       logger(value1);
       if (value1 == null) {

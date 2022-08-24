@@ -12,4 +12,6 @@ class CacheConstants {
 
   /// 是否同意用户协议
   static const String isAgree = 'IS_AGREE_CACHE';
+
+  static const String isUploadedDeviceInfo = 'isUploadedDeviceInfo';
 }

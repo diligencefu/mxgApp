@@ -21,6 +21,8 @@ void main() async {
 
   await SpUtil.getInstance();
   LogUtil.init();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 

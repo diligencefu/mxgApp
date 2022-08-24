@@ -162,4 +162,17 @@ class UserRepository {
     toast(resp.message);
     return null;
   }
+
+  static Future uplaodDeviceInfo(Map<String, String> data) async {
+    var resp = await DioApi.getInstance().post(
+      'user/device/addActive',
+      data: data,
+    );
+    EasyLoading.dismiss();
+    if (resp.sucess) {
+      return resp.data;
+    }
+    toast(resp.message);
+    return null;
+  }
 }

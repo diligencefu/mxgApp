@@ -26,22 +26,36 @@ class WebviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<WebviewLogic>(builder: (logic) {
-      return WebviewScaffold(
-        url: state.url,
-        javascriptChannels: _alertJavascriptChannel(context),
-        mediaPlaybackRequiresUserGesture: false,
-        appBar: state.title == null
-            ? null
-            : AppBar(
-                backgroundColor: Colors.white,
-                automaticallyImplyLeading: true,
-                centerTitle: true,
-                elevation: 0.5,
-                title: Text(
-                  state.title!,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
+      return WillPopScope(
+        onWillPop: () async {
+          var webView = state.flutterWebViewPlugin;
+          if (await webView.canGoBack()) {
+            // WebHistory webHistory = await webView.getCopyBackForwardList();
+            // if (webHistory.currentIndex <= 1) {
+            //   return true;
+            // }
+            webView.goBack();
+            return false;
+          }
+          return true;
+        },
+        child: WebviewScaffold(
+          url: state.url,
+          javascriptChannels: _alertJavascriptChannel(context),
+          mediaPlaybackRequiresUserGesture: false,
+          appBar: state.title == null
+              ? null
+              : AppBar(
+                  backgroundColor: Colors.white,
+                  automaticallyImplyLeading: true,
+                  centerTitle: true,
+                  elevation: 0.5,
+                  title: Text(
+                    state.title!,
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
+                  ),
                 ),
-              ),
+        ),
       );
     });
   }
@@ -73,7 +87,7 @@ class WebviewPage extends StatelessWidget {
               case "getLoginInfo":
                 var token = SpUtil.getString(CacheConstants.token) ?? "";
                 if (token.isEmpty) {
-                  toLoginPage(data);
+                  logic.toLoginPage(data);
                   return;
                 }
                 data['data'] = {"token": token};
@@ -81,7 +95,7 @@ class WebviewPage extends StatelessWidget {
                 callH5('webViewToLogin', callbackMap);
                 break;
               case "toLogin":
-                toLoginPage(data);
+                logic.toLoginPage(data);
                 break;
               case "getPackageName":
                 var deviceData =
@@ -111,7 +125,7 @@ class WebviewPage extends StatelessWidget {
               case "logout":
                 SpUtil.remove(CacheConstants.token);
                 callH5('webViewLoginOut', {});
-                toLoginPage(data);
+                logic.toLoginPage(data);
                 break;
               case "logEventByLocal":
                 PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -160,16 +174,6 @@ class WebviewPage extends StatelessWidget {
             }
           })
     ].toSet();
-  }
-
-  toLoginPage(dynamic data) {
-    Get.offAllNamed(Routes.login)?.then((value) {
-      var token = SpUtil.getString(CacheConstants.token);
-      data['data'] = {"token": token};
-      data["callback"] = "webViewToLogin";
-      Map<String, dynamic> callbackMap = data;
-      callH5('webViewToLogin', callbackMap);
-    });
   }
 
   Map<String, String> _readAndroidBuildData(AndroidDeviceInfo build) {

@@ -84,6 +84,7 @@ class RegisterPage extends StatelessWidget {
                           textAlign: TextAlign.left,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(6) //限制长度
                           ],
                           decoration: InputDecoration(
                               contentPadding:
