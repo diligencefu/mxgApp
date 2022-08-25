@@ -44,12 +44,19 @@ class LoginLogic extends GetxController {
     if (phone.length > 10) {
       return;
     }
+    EasyLoading.show();
     UserRepository.checkPhone(phone).then((value1) {
       logger(value1);
       if (value1 == null) {
+        EasyLoading.dismiss();
         return;
       }
-      UserRepository.sendSmsCode(phone).then((value) {
+      UserRepository.sendSmsCode(phone, value1["existed"] ? "1" : "2")
+          .then((value) {
+        EasyLoading.dismiss();
+        if (value == null) {
+          return;
+        }
         Get.toNamed(Routes.register, arguments: value1);
       });
     });

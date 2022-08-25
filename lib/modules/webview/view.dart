@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,8 @@ class WebviewPage extends StatelessWidget {
             webView.goBack();
             return false;
           }
-          return true;
+          exit(0);
+          // return true;
         },
         child: WebviewScaffold(
           url: state.url,

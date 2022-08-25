@@ -36,6 +36,15 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
     Uint8List bytes = base64.decode(base64Image);
 
     compressList(bytes, data, resultMap);
+
+    state.flutterWebViewPlugin.onHttpError.listen((event) {
+      toLoginPage({
+        "action": "getLoginInfo",
+        "id": "0.40636546644814286",
+        "data": {"token": ""},
+        "callback": "webViewToLogin"
+      });
+    });
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_quick/repository/user_repository.dart';
 import 'package:flutter_quick/routes/routes.dart';
 import 'package:flutter_quick/utils/helper.dart';
@@ -50,8 +51,10 @@ class RegisterLogic extends GetxController {
   sendSms() {
     var phone = Get.arguments["mobile"];
     if (state.seconds != 60) return;
-
-    UserRepository.sendSmsCode(phone).then((value) {
+    EasyLoading.show();
+    UserRepository.sendSmsCode(phone, Get.arguments["existed"] ? "1" : "2")
+        .then((value) {
+      EasyLoading.dismiss();
       if (value == null) {
         return;
       }
@@ -88,6 +91,7 @@ class RegisterLogic extends GetxController {
     var timezone = await FlutterNativeTimezone.getLocalTimezone();
     deviceData["timeZone"] = timezone;
     var method = "register";
+    EasyLoading.show();
     if (Get.arguments["existed"] == true) {
       method = "login";
     } else {
@@ -98,6 +102,7 @@ class RegisterLogic extends GetxController {
       // deviceData.remove("mac");
       // deviceData.remove("timeZone");
       UserRepository.register(deviceData).then((value) {
+        EasyLoading.dismiss();
         if (value != null) {
           SpUtil.putString(CacheConstants.token, value["token"]);
           SpUtil.putString(CacheConstants.userId, value["userId"]);
@@ -107,8 +112,9 @@ class RegisterLogic extends GetxController {
       });
       return;
     }
-    logger(deviceData);
+    // logger(deviceData);
     UserRepository.login(deviceData).then((value) {
+      EasyLoading.dismiss();
       if (value != null) {
         Get.offAllNamed(Routes.webview);
       }

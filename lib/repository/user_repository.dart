@@ -85,9 +85,9 @@ class UserRepository {
   }
 
   /// 发送验证码
-  static Future sendSmsCode(dynamic phoneNumber) async {
+  static Future sendSmsCode(dynamic phoneNumber, String type) async {
     var resp = await DioApi.getInstance().post("security/getVerifyCode",
-        data: {"mobile": phoneNumber, "type": 1});
+        data: {"mobile": phoneNumber, "type": type});
 
     if (resp.sucess) {
       return resp.data;
