@@ -93,6 +93,7 @@ class WebviewPage extends StatelessWidget {
                   return;
                 }
                 data['data'] = {"token": token};
+                data["result"] = "ok";
                 Map<String, dynamic> callbackMap = data;
                 callH5('webViewToLogin', callbackMap);
                 break;
@@ -114,6 +115,7 @@ class WebviewPage extends StatelessWidget {
                 }
                 deviceData["imei"] = platformImei;
                 data['data'] = deviceData;
+                data["result"] = "ok";
                 Map<String, dynamic> callbackMap = data;
                 callH5('webViewGetPackageName', callbackMap);
                 break;
@@ -121,6 +123,7 @@ class WebviewPage extends StatelessWidget {
               case "getVersionName":
                 PackageInfo packageInfo = await PackageInfo.fromPlatform();
                 data['data'] = {"versionName": packageInfo.version};
+                data["result"] = "ok";
                 Map<String, dynamic> callbackMap = data;
                 callH5('webViewVersionName', callbackMap);
                 break;
@@ -183,7 +186,7 @@ class WebviewPage extends StatelessWidget {
       'appName': "SmartLoan",
       'afid': "0",
       'packageName': "com.mmt.smartloan",
-      'androidId': '',
+      'androidId': build.androidId ?? "",
     };
   }
 }

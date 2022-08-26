@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quick/routes/routes.dart';
-import 'package:logger/logger.dart';
 import 'package:sp_util/sp_util.dart';
 import '../../constants/cache.dart';
 import '../../repository/user_repository.dart';
@@ -44,6 +42,9 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
         "data": {"token": ""},
         "callback": "webViewToLogin"
       });
+    });
+    state.flutterWebViewPlugin.onStateChanged.listen((event) {
+      logger(event);
     });
   }
 
@@ -134,6 +135,7 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
     data = params;
     var param = {
       "action": "timeSDK",
+      "result": "ok",
       "id": data["id"].toString(),
       "data": {
         "orderNo": data["data"]["orderNo"].toString(),

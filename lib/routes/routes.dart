@@ -18,7 +18,8 @@ class Routes {
   // static const String max = "/max";
 
   /// 初始化路由
-  static String initialRoute = webview;
+  static String initialRoute =
+      (SpUtil.getString(CacheConstants.token) ?? "").isEmpty ? login : webview;
   // static String initialRoute = login;
 
   static final pages = [

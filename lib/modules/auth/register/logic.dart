@@ -70,37 +70,12 @@ class RegisterLogic extends GetxController {
     if (smsCode.length > 6) {
       return;
     }
-    // var result = await InstallReferrer.app;
-    var mac = await PlatformDeviceId.getDeviceId;
     var deviceData =
         _readAndroidBuildData(await deviceInfoPlugin.androidInfo, null);
-    deviceData["mac"] = mac.toString();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     deviceData["appVersion"] = packageInfo.version;
-    String platformImei;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformImei = await ImeiPlugin.getImei(
-              shouldShowRequestPermissionRationale: false) ??
-          "";
-    } on PlatformException {
-      platformImei = '';
-    }
-    deviceData["imei"] = platformImei;
-
-    var timezone = await FlutterNativeTimezone.getLocalTimezone();
-    deviceData["timeZone"] = timezone;
-    var method = "register";
     EasyLoading.show();
-    if (Get.arguments["existed"] == true) {
-      method = "login";
-    } else {
-      // deviceData.remove("appName");
-      // deviceData.remove("releaseDate");
-      // deviceData.remove("isRooted");
-      // deviceData.remove("timeZoneId");
-      // deviceData.remove("mac");
-      // deviceData.remove("timeZone");
+    if (Get.arguments["existed"] == false) {
       UserRepository.register(deviceData).then((value) {
         EasyLoading.dismiss();
         if (value != null) {
@@ -112,7 +87,7 @@ class RegisterLogic extends GetxController {
       });
       return;
     }
-    // logger(deviceData);
+    logger(deviceData);
     UserRepository.login(deviceData).then((value) {
       EasyLoading.dismiss();
       if (value != null) {
@@ -134,14 +109,11 @@ class RegisterLogic extends GetxController {
       'verifyCode': smsCode,
       'adrVersion': build.version.sdkInt.toString(),
       'channelId': "SmartLoan",
-      'appName': "SmartLoan",
       'packageName': "com.mmt.smartloan",
-      'androidId': '',
-      'releaseDate': build.version.securityPatch.toString(),
-      'isRooted': "false",
-      'timeZoneId': "",
+      'androidId': build.androidId ?? "546135131",
       // "installReferce": referrerToReadableString(result.referrer),
       "installReferce": "",
+      'appName': "SmartLoan",
       'verified': true.toString()
     };
   }
