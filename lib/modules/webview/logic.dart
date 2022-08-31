@@ -34,18 +34,6 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
     Uint8List bytes = base64.decode(base64Image);
 
     compressList(bytes, data, resultMap);
-
-    state.flutterWebViewPlugin.onHttpError.listen((event) {
-      toLoginPage({
-        "action": "getLoginInfo",
-        "id": "0.40636546644814286",
-        "data": {"token": ""},
-        "callback": "webViewToLogin"
-      });
-    });
-    state.flutterWebViewPlugin.onStateChanged.listen((event) {
-      logger(event);
-    });
   }
 
   @override
@@ -60,6 +48,19 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
 
     LivenessPlugin.initSDK(
         '54e03a28ec301bb8', '36181f76c174e848', Market.Mexico);
+
+    state.flutterWebViewPlugin.onHttpError.listen((event) {
+      toLoginPage({
+        "action": "getLoginInfo",
+        "id": "0.40636546644814286",
+        "data": {"token": ""},
+        "callback": "webViewToLogin"
+      });
+    });
+    state.flutterWebViewPlugin.onStateChanged.listen((event) {
+      logger(event);
+    });
+
     channel.setMethodCallHandler((call) async {
       // logger("接收到call: ${call.method} arguments: ${call.arguments}");
 
@@ -163,7 +164,8 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
       quality: 30,
       rotate: 90,
     );
-    params["data"]["livenessId"] = resultMap["resultMap"];
+    params["data"]["livenessId"] = resultMap["livenessId"];
+    params["data"]["transactionId"] = resultMap["transactionId"];
     params["data"]["file"] = uint8ListTob64(result);
     params["result"] = "ok";
     Map<String, dynamic> callbackMap = params;
@@ -172,8 +174,9 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
 
   String uint8ListTob64(Uint8List uint8list) {
     String base64String = base64Encode(uint8list);
-    String header = "data:image/png;base64,";
-    return header + base64String;
+    // String header = "data:image/png;base64,";
+    // return header + base64String;
+    return base64String;
   }
 
   toLoginPage(dynamic data) {
