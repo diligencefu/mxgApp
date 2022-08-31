@@ -148,7 +148,7 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
         "contact": data["data"]["contact"],
         "location": data["data"]["location"]
       },
-      "callback": "webViewToTime"
+      "callback": data["webViewToTime"]
     };
     channel.invokeMethod('collectMessage', json.encode(param));
   }

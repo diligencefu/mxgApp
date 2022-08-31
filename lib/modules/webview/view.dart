@@ -82,8 +82,8 @@ class WebviewPage extends StatelessWidget {
             // logger(message.message);
             var data = jsonDecode(message.message);
             var action = data["action"];
-            // Get.log(">>>>>>>>${message.message}---${action}");
-            Get.log(">>>>>>>>${action}");
+            Get.log(">>>>>>>>${message.message}---${action}");
+            // Get.log(">>>>>>>>${action}");
 
             switch (action) {
               case "getLoginInfo":
@@ -144,9 +144,9 @@ class WebviewPage extends StatelessWidget {
                 break;
 
               case "timeSDK":
-                if (!data["data"]["isSubmit"]) {
-                  return;
-                }
+                // if (!data["data"]["isSubmit"]) {
+                //   return;
+                // }
                 Get.find<WebviewLogic>().collectMessage(data);
                 break;
 

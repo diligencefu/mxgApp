@@ -69,9 +69,9 @@ class AppLogic extends GetxController {
   }
 
   uploadDeviceInfo() async {
-    if (SpUtil.getString(CacheConstants.isUploadedDeviceInfo) == "true") {
-      return;
-    }
+    // if (SpUtil.getString(CacheConstants.isUploadedDeviceInfo) == "true") {
+    //   return;
+    // }
     var deviceData =
         _readAndroidBuildData(await deviceInfoPlugin.androidInfo, null);
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
