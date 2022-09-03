@@ -45,6 +45,7 @@ dependencies:
   flutter_image_compress: ^1.1.1
   dio_proxy_plugin: ^2.0.3
   connectivity_plus: ^2.3.6+1
+  ota_update: ^4.0.1
 
   liveness_plugin: 
     path: ./plugins/liveness_plugin

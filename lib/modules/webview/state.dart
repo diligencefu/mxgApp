@@ -5,6 +5,8 @@ class WebviewState {
   String url = "http://8.134.38.88:3003/#/";
   final flutterWebViewPlugin = FlutterWebviewPlugin();
 
+  bool isUpdate = false;
+
   WebviewState() {
     ///Initialize variables
   }

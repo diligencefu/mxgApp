@@ -41,22 +41,29 @@ class WebviewPage extends StatelessWidget {
           exit(0);
           // return true;
         },
-        child: WebviewScaffold(
-          url: state.url,
-          javascriptChannels: _alertJavascriptChannel(context),
-          mediaPlaybackRequiresUserGesture: false,
-          appBar: state.title == null
-              ? null
-              : AppBar(
-                  backgroundColor: Colors.white,
-                  automaticallyImplyLeading: true,
-                  centerTitle: true,
-                  elevation: 0.5,
-                  title: Text(
-                    state.title!,
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ),
+        child: Stack(
+          children: [
+            if (!state.isUpdate)
+              WebviewScaffold(
+                url: state.url,
+                javascriptChannels: _alertJavascriptChannel(context),
+                mediaPlaybackRequiresUserGesture: false,
+                appBar: state.title == null
+                    ? null
+                    : AppBar(
+                        backgroundColor: Colors.white,
+                        automaticallyImplyLeading: true,
+                        centerTitle: true,
+                        elevation: 0.5,
+                        title: Text(
+                          state.title!,
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                withZoom: true,
+              ),
+          ],
         ),
       );
     });

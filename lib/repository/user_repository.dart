@@ -175,4 +175,17 @@ class UserRepository {
     toast(resp.message);
     return null;
   }
+
+  static Future checkUpdate(Map<String, String> data) async {
+    var resp = await DioApi.getInstance().get(
+      'app/getNewVersion',
+      data: data,
+    );
+    EasyLoading.dismiss();
+    if (resp.sucess) {
+      return resp.data;
+    }
+    toast(resp.message);
+    return null;
+  }
 }

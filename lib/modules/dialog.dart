@@ -362,7 +362,7 @@ class _UpdateWidgetState extends State<UpdateWidget> {
                     ],
                   )),
                 ),
-                if (!widget.isForce)
+                if (widget.isForce)
                   Column(children: <Widget>[
                     const SizedBox(
                         width: 0,
@@ -375,7 +375,7 @@ class _UpdateWidgetState extends State<UpdateWidget> {
                           const BoxConstraints(maxHeight: 30, maxWidth: 30),
                       padding: EdgeInsets.zero,
                       icon: Image.asset('assets/images/update_ic_close.png'),
-                      onPressed: widget.onClose,
+                      onPressed: widget.onIgnore,
                     )
                   ])
                 else
