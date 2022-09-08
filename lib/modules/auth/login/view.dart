@@ -6,6 +6,7 @@ import 'package:flutter_quick/widgets/buttons/app_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../logic.dart';
 import 'logic.dart';
 import 'state.dart';
 
@@ -77,6 +78,10 @@ class LoginPage extends StatelessWidget {
                           width: 229.w,
                           child: TextField(
                             controller: state.controller1,
+                            onChanged: (value) {
+                              Get.find<AppLogic>()
+                                  .logEvent("loginPhone_phoneInput");
+                            },
                             maxLines: 1,
                             style: TextStyle(
                               color: Colors.black,

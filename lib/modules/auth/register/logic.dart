@@ -8,6 +8,7 @@ import 'package:flutter_quick/routes/routes.dart';
 import 'package:flutter_quick/utils/helper.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../../logic.dart';
 import 'state.dart';
 
 import 'package:platform_device_id/platform_device_id.dart';
@@ -52,10 +53,12 @@ class RegisterLogic extends GetxController {
     var phone = Get.arguments["mobile"];
     if (state.seconds != 60) return;
     EasyLoading.show();
+    Get.find<AppLogic>().logEvent("logincode_verificationResend");
     UserRepository.sendSmsCode(phone, Get.arguments["existed"] ? "1" : "2")
         .then((value) {
       EasyLoading.dismiss();
       if (value == null) {
+        Get.find<AppLogic>().logEvent("logincode_SMSFailed");
         return;
       }
       state.seconds -= 1;
@@ -66,6 +69,8 @@ class RegisterLogic extends GetxController {
   }
 
   submit() async {
+    Get.find<AppLogic>().logEvent("logincode_confirm");
+
     var smsCode = state.controller1.text;
     if (smsCode.length > 6) {
       return;
@@ -76,22 +81,30 @@ class RegisterLogic extends GetxController {
     deviceData["appVersion"] = packageInfo.version;
     EasyLoading.show();
     if (Get.arguments["existed"] == false) {
+      // Get.find<AppLogic>().logEvent("logincode_reg");
       UserRepository.register(deviceData).then((value) {
         EasyLoading.dismiss();
         if (value != null) {
+          // Get.find<AppLogic>().logEvent("logincode_RegSuccess");
           SpUtil.putString(CacheConstants.token, value["token"]);
           SpUtil.putString(CacheConstants.userId, value["userId"]);
           SpUtil.putString(CacheConstants.mobile, Get.arguments["mobile"]);
           Get.offAllNamed(Routes.webview);
+        } else {
+          // Get.find<AppLogic>().logEvent("logincode_Regfailed");
         }
       });
       return;
     }
     logger(deviceData);
+    // Get.find<AppLogic>().logEvent("logincode_login");
     UserRepository.login(deviceData).then((value) {
       EasyLoading.dismiss();
       if (value != null) {
+        // Get.find<AppLogic>().logEvent("logincode_LoginSuccess");
         Get.offAllNamed(Routes.webview);
+      } else {
+        // Get.find<AppLogic>().logEvent("logincode_Loginfailed");
       }
     });
   }

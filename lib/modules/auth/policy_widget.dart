@@ -5,6 +5,8 @@ import 'package:flutter_quick/constants/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../logic.dart';
+
 class PolicyWidget extends StatefulWidget {
   final Function(bool)? onChecked;
 
@@ -73,6 +75,7 @@ class _PolicyWidgetState extends State<PolicyWidget> {
             style: style2,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
+                Get.find<AppLogic>().logEvent("loginPhone_termOfService");
                 Get.toNamed(
                   Routes.webview,
                   arguments: {
@@ -91,6 +94,7 @@ class _PolicyWidgetState extends State<PolicyWidget> {
             style: style2,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
+                Get.find<AppLogic>().logEvent("loginPhone_privacy");
                 Get.toNamed(
                   Routes.webview,
                   arguments: {

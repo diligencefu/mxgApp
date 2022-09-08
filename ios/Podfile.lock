@@ -1,4 +1,10 @@
 PODS:
+  - appsflyer_sdk (6.8.0):
+    - AppsFlyerFramework (= 6.8.0)
+    - Flutter
+  - AppsFlyerFramework (6.8.0):
+    - AppsFlyerFramework/Main (= 6.8.0)
+  - AppsFlyerFramework/Main (6.8.0)
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -57,6 +63,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - appsflyer_sdk (from `.symlinks/plugins/appsflyer_sdk/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
@@ -77,6 +84,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git:
+    - AppsFlyerFramework
     - libwebp
     - Mantle
     - ReachabilitySwift
@@ -84,6 +92,8 @@ SPEC REPOS:
     - SDWebImageWebPCoder
 
 EXTERNAL SOURCES:
+  appsflyer_sdk:
+    :path: ".symlinks/plugins/appsflyer_sdk/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info:
@@ -120,6 +130,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  appsflyer_sdk: 6d03341418c1acf261fdfde2eb27fdeaf04fa2c2
+  AppsFlyerFramework: a8de532f81b1d3c1dfc451f0ecded91ebb6a0e47
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed

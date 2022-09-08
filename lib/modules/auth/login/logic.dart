@@ -11,11 +11,19 @@ import 'package:http/http.dart' as http;
 import 'package:sp_util/sp_util.dart';
 
 import '../../../constants/cache.dart';
+import '../../../logic.dart';
 import '../../../routes/routes.dart';
 import 'state.dart';
 
 class LoginLogic extends GetxController {
   final state = LoginState();
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    Get.put(AppLogic()).logEvent("loginPhone_open");
+  }
 
   @override
   void onReady() {
@@ -36,6 +44,7 @@ class LoginLogic extends GetxController {
   }
 
   submit() {
+    Get.find<AppLogic>().logEvent("loginPhone_next");
     var phone = state.controller1.text;
     if (phone.isEmpty) {
       toast("请输入手机号");
@@ -51,6 +60,7 @@ class LoginLogic extends GetxController {
         EasyLoading.dismiss();
         return;
       }
+      Get.find<AppLogic>().logEvent("loginPhone_sendOtp");
       UserRepository.sendSmsCode(phone, value1["existed"] ? "1" : "2")
           .then((value) {
         EasyLoading.dismiss();

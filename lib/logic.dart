@@ -2,18 +2,18 @@
 
 import 'dart:async';
 
+import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_proxy_plugin/dio_proxy_plugin.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_quick/modules/webview/logic.dart';
 import 'package:flutter_quick/repository/user_repository.dart';
 import 'package:flutter_quick/state.dart';
+import 'package:flutter_quick/utils/helper.dart';
 import 'package:get/get.dart';
-import 'package:imei_plugin/imei_plugin.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:platform_device_id/platform_device_id.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sp_util/sp_util.dart';
 
 import 'constants/cache.dart';
@@ -28,6 +28,10 @@ class AppLogic extends GetxController {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  late AppsflyerSdk _appsflyerSdk;
+
+  String? androidId = "";
+  String? version = "";
 
   @override
   onInit() async {
@@ -40,15 +44,28 @@ class AppLogic extends GetxController {
 
       update();
     }
-
     // updateUser();
     uploadDeviceInfo();
     // _setProxy();
-
     initConnectivity();
-
+    initAppsFlyer();
+    addPermissionObserver();
+    logEvent("splash_open");
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  initAppsFlyer() {
+    Map<String, Object> appsFlyerOptions = {
+      "afDevKey": "yFbZbrMQ7eoqbZ4BdAPN",
+      // "afAppId": "appId",
+      "isDebug": true
+    };
+    _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
+    _appsflyerSdk.initSdk(
+        registerConversionDataCallback: true,
+        registerOnAppOpenAttributionCallback: true,
+        registerOnDeepLinkingCallback: true);
   }
 
   /// 更新用户信息
@@ -72,9 +89,11 @@ class AppLogic extends GetxController {
     // if (SpUtil.getString(CacheConstants.isUploadedDeviceInfo) == "true") {
     //   return;
     // }
+
     var deviceData =
         _readAndroidBuildData(await deviceInfoPlugin.androidInfo, null);
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var packageInfo = await PackageInfo.fromPlatform();
+
     deviceData["appVersion"] = packageInfo.version;
     UserRepository.uplaodDeviceInfo(deviceData).then((value) {
       if (value == null) {
@@ -86,6 +105,7 @@ class AppLogic extends GetxController {
 
   Map<String, String> _readAndroidBuildData(
       AndroidDeviceInfo build, dynamic result) {
+    androidId = build.androidId;
     return <String, String>{
       'adrVersion': build.version.sdkInt.toString(),
       'channelId': "SmartLoan",
@@ -113,18 +133,6 @@ class AppLogic extends GetxController {
       var httpProxyAdapter = HttpProxyAdapter(ipAddr: arrProxy[0], port: port);
       dio.httpClientAdapter = httpProxyAdapter;
     }
-
-    // // test dio
-    // var response = await dio.get('/get?a=2');
-    // print(response.data);
-    // response = await dio.post('/post', data: {'a': 2});
-    // print(response.data);
-
-    // if (!mounted) return;
-
-    // setState(() {
-    //   _deviceProxy = deviceProxy;
-    // });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -147,6 +155,31 @@ class AppLogic extends GetxController {
         "data": {"token": ""},
         "callback": "webViewToLogin"
       });
+    }
+  }
+
+  // Future<bool?>
+  logEvent(String eventName) {
+    // var eventValues = {
+    //   'packageName': "com.mmt.smartloan",
+    //   "androidId": androidId ?? "",
+    //   "installRefer": "",
+    //   "appVersion": version,
+    // };
+    // return _appsflyerSdk.logEvent(eventName, eventValues);
+  }
+
+  addPermissionObserver() async {
+    var status = await Permission.camera.status;
+    if (status.isDenied) {
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
+      logger("messagemessagemessagemessage");
+    }
+
+// You can can also directly ask the permission about its status.
+    if (await Permission.location.isRestricted) {
+      logger("messagemessagemessagemessage");
+      // The OS restricts access, for example because of parental controls.
     }
   }
 }

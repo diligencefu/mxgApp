@@ -44,25 +44,35 @@ class WebviewPage extends StatelessWidget {
         child: Stack(
           children: [
             if (!state.isUpdate)
-              WebviewScaffold(
-                url: state.url,
-                javascriptChannels: _alertJavascriptChannel(context),
-                mediaPlaybackRequiresUserGesture: false,
-                appBar: state.title == null
-                    ? null
-                    : AppBar(
-                        backgroundColor: Colors.white,
-                        automaticallyImplyLeading: true,
-                        centerTitle: true,
-                        elevation: 0.5,
-                        title: Text(
-                          state.title!,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.black),
+              Scaffold(
+                body: WebviewScaffold(
+                  url: state.url,
+                  javascriptChannels: _alertJavascriptChannel(context),
+                  mediaPlaybackRequiresUserGesture: false,
+                  appBar: state.title == null
+                      ? null
+                      : AppBar(
+                          backgroundColor: Colors.white,
+                          automaticallyImplyLeading: true,
+                          centerTitle: true,
+                          elevation: 0.5,
+                          title: Text(
+                            state.title!,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.black),
+                          ),
                         ),
-                      ),
-                withZoom: true,
-              ),
+                  withZoom: true,
+                ),
+                floatingActionButton: FloatingActionButton.extended(
+                  onPressed: () {
+                    // Add your onPressed code here!
+                  },
+                  label: const Text('Approve'),
+                  icon: const Icon(Icons.thumb_up),
+                  backgroundColor: Colors.pink,
+                ),
+              )
           ],
         ),
       );

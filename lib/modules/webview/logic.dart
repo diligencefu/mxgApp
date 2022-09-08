@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quick/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sp_util/sp_util.dart';
 import '../../constants/cache.dart';
+import '../../logic.dart';
 import '../../repository/user_repository.dart';
 import '../../utils/helper.dart';
 import '../dialog.dart';
@@ -35,7 +37,9 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
     LivenessPlugin.initSDK(
         '54e03a28ec301bb8', '36181f76c174e848', Market.Mexico);
     addObserver();
-    checkUpdate();
+    if (state.url == "http://8.134.38.88:3003/#/") {
+      checkUpdate();
+    }
   }
 
   @override
@@ -197,7 +201,10 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
     });
   }
 
-  checkUpdate() {
+  checkUpdate() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var old = packageInfo.version;
+
     UserRepository.checkUpdate({"packageName": "com.mmt.smartloan"})
         .then((value) {
       if (value == null) {
@@ -207,7 +214,11 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
         toast("apk地址错误");
         return;
       }
-      customStyle(value);
+
+      if (haveNewVersion(value["versionName"], old)) {
+        customStyle(value);
+      }
+
       // update();
     });
   }
@@ -235,9 +246,31 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
       state.isUpdate = false;
       update();
       OtaUpdate().execute(value["link"]);
+      Get.find<AppLogic>().logEvent("updateConfirm_yes");
     }, onIgnore: () {
+      Get.find<AppLogic>().logEvent("updateConfirm_no");
       state.isUpdate = false;
       update();
     });
+  }
+
+  bool haveNewVersion(String newVersion, String old) {
+    if (newVersion.isEmpty || old.isEmpty) return false;
+    int newVersionInt, oldVersion;
+    var newList = newVersion.split('.');
+    var oldList = old.split('.');
+    if (newList.length == 0 || oldList.length == 0) {
+      return false;
+    }
+    for (int i = 0; i < newList.length; i++) {
+      newVersionInt = int.parse(newList[i]);
+      oldVersion = int.parse(oldList[i]);
+      if (newVersionInt > oldVersion) {
+        return true;
+      } else if (newVersionInt < oldVersion) {
+        return false;
+      }
+    }
+    return false;
   }
 }

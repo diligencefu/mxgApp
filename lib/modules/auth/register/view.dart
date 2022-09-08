@@ -6,6 +6,7 @@ import 'package:flutter_quick/widgets/buttons/app_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../logic.dart';
 import 'logic.dart';
 import 'state.dart';
 
@@ -75,6 +76,10 @@ class RegisterPage extends StatelessWidget {
                       children: [
                         TextField(
                           controller: state.controller1,
+                          onChanged: (value) {
+                            Get.find<AppLogic>()
+                                .logEvent("logincode_codeInput");
+                          },
                           maxLines: 1,
                           style: TextStyle(
                             color: Colors.black,

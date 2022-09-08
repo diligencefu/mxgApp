@@ -46,6 +46,7 @@ dependencies:
   dio_proxy_plugin: ^2.0.3
   connectivity_plus: ^2.3.6+1
   ota_update: ^4.0.1
+  appsflyer_sdk: ^6.8.2
 
   liveness_plugin: 
     path: ./plugins/liveness_plugin
