@@ -211,8 +211,8 @@ class WebviewLogic extends GetxController with LivenessDetectionCallback {
         return;
       }
       if (!value["link"].toString().endsWith(".apk")) {
-        toast("apk地址错误");
-        return;
+        // toast("apk地址错误");
+        // return;
       }
 
       if (haveNewVersion(value["versionName"], old)) {

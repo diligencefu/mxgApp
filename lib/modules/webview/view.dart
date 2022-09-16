@@ -16,6 +16,7 @@ import 'package:liveness_plugin/liveness_plugin.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../logic.dart';
 import 'logic.dart';
 
 class WebviewPage extends StatelessWidget {
@@ -29,6 +30,11 @@ class WebviewPage extends StatelessWidget {
     return GetBuilder<WebviewLogic>(builder: (logic) {
       return WillPopScope(
         onWillPop: () async {
+          if (state.title != null) {
+            Get.back();
+            return true;
+          }
+
           var webView = state.flutterWebViewPlugin;
           if (await webView.canGoBack()) {
             // WebHistory webHistory = await webView.getCopyBackForwardList();
@@ -56,22 +62,18 @@ class WebviewPage extends StatelessWidget {
                           automaticallyImplyLeading: true,
                           centerTitle: true,
                           elevation: 0.5,
-                          title: Text(
-                            state.title!,
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.black),
-                          ),
+                          toolbarHeight: 10,
                         ),
                   withZoom: true,
                 ),
-                floatingActionButton: FloatingActionButton.extended(
-                  onPressed: () {
-                    // Add your onPressed code here!
-                  },
-                  label: const Text('Approve'),
-                  icon: const Icon(Icons.thumb_up),
-                  backgroundColor: Colors.pink,
-                ),
+                // floatingActionButton: FloatingActionButton.extended(
+                //   onPressed: () {
+                //     // Add your onPressed code here!
+                //   },
+                //   label: const Text(''),
+                //   icon: const Icon(Icons.thumb_up),
+                //   backgroundColor: Colors.pink,
+                // ),
               )
           ],
         ),
@@ -201,9 +203,9 @@ class WebviewPage extends StatelessWidget {
   Map<String, String> _readAndroidBuildData(AndroidDeviceInfo build) {
     return <String, String>{
       'appName': "SmartLoan",
-      'afid': "0",
+      'afid': Get.find<AppLogic>().uid,
       'packageName': "com.mmt.smartloan",
-      'androidId': build.androidId ?? "",
+      'androidId': Get.find<AppLogic>().androidId,
     };
   }
 }

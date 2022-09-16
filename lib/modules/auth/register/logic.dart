@@ -29,6 +29,9 @@ class RegisterLogic extends GetxController {
   }
 
   timeStart() {
+    state.btnText = "${state.seconds}s";
+    update();
+
     state.timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (state.seconds < 1) {
         timer.cancel();
@@ -52,7 +55,7 @@ class RegisterLogic extends GetxController {
   sendSms() {
     var phone = Get.arguments["mobile"];
     if (state.seconds != 60) return;
-    EasyLoading.show();
+    // EasyLoading.show();
     Get.find<AppLogic>().logEvent("logincode_verificationResend");
     UserRepository.sendSmsCode(phone, Get.arguments["existed"] ? "1" : "2")
         .then((value) {
@@ -72,14 +75,19 @@ class RegisterLogic extends GetxController {
     Get.find<AppLogic>().logEvent("logincode_confirm");
 
     var smsCode = state.controller1.text;
-    if (smsCode.length > 6) {
+    if (smsCode.isEmpty) {
+      toast("Código de verificación vacío");
+      return;
+    }
+    if (smsCode.length != 6) {
+      toast("Codigo de verificacion inválido, envia nuevamente");
       return;
     }
     var deviceData =
         _readAndroidBuildData(await deviceInfoPlugin.androidInfo, null);
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     deviceData["appVersion"] = packageInfo.version;
-    EasyLoading.show();
+    // EasyLoading.show();
     if (Get.arguments["existed"] == false) {
       // Get.find<AppLogic>().logEvent("logincode_reg");
       UserRepository.register(deviceData).then((value) {
@@ -123,7 +131,7 @@ class RegisterLogic extends GetxController {
       'adrVersion': build.version.sdkInt.toString(),
       'channelId': "SmartLoan",
       'packageName': "com.mmt.smartloan",
-      'androidId': build.androidId ?? "546135131",
+      'androidId': Get.find<AppLogic>().androidId,
       // "installReferce": referrerToReadableString(result.referrer),
       "installReferce": "",
       'appName': "SmartLoan",

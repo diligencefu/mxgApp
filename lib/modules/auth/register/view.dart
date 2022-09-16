@@ -76,6 +76,8 @@ class RegisterPage extends StatelessWidget {
                       children: [
                         TextField(
                           controller: state.controller1,
+                          keyboardType: TextInputType.number,
+                          autofocus: true,
                           onChanged: (value) {
                             Get.find<AppLogic>()
                                 .logEvent("logincode_codeInput");
@@ -151,6 +153,15 @@ class RegisterPage extends StatelessWidget {
           ),
         ],
       ),
+      Container(
+        padding: EdgeInsets.only(left: 10.w, top: 20.h),
+        child: BackButton(
+          color: Colors.white,
+          onPressed: () {
+            Get.back();
+          },
+        ),
+      )
     ]);
   }
 }

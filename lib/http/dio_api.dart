@@ -16,8 +16,8 @@ class DioApi {
 
   DioApi() {
     var options = BaseOptions(
-      connectTimeout: 200000,
-      receiveTimeout: 200000,
+      connectTimeout: 2000,
+      receiveTimeout: 2000,
       baseUrl: Config.apiHost,
     );
     Dio dio = Dio(options);

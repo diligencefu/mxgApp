@@ -20,6 +20,7 @@ import 'constants/cache.dart';
 import 'models/user_model.dart';
 import 'routes/routes.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_id/device_id.dart';
 
 /// 全局逻辑 用于获取用户状态、主题设置等信息
 class AppLogic extends GetxController {
@@ -30,8 +31,9 @@ class AppLogic extends GetxController {
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   late AppsflyerSdk _appsflyerSdk;
 
-  String? androidId = "";
-  String? version = "";
+  String androidId = "";
+  String version = "";
+  String uid = "";
 
   @override
   onInit() async {
@@ -66,6 +68,10 @@ class AppLogic extends GetxController {
         registerConversionDataCallback: true,
         registerOnAppOpenAttributionCallback: true,
         registerOnDeepLinkingCallback: true);
+
+    _appsflyerSdk.getAppsFlyerUID().then((value) {
+      uid = value ?? "";
+    });
   }
 
   /// 更新用户信息
@@ -86,15 +92,33 @@ class AppLogic extends GetxController {
   }
 
   uploadDeviceInfo() async {
-    // if (SpUtil.getString(CacheConstants.isUploadedDeviceInfo) == "true") {
-    //   return;
-    // }
-
+    if (SpUtil.getString(CacheConstants.isUploadedDeviceInfo) == "true") {
+      return;
+    }
     var deviceData =
         _readAndroidBuildData(await deviceInfoPlugin.androidInfo, null);
     var packageInfo = await PackageInfo.fromPlatform();
 
     deviceData["appVersion"] = packageInfo.version;
+
+    androidId = await DeviceId.getID;
+    deviceData["androidId"] = androidId;
+
+    if (deviceData["afId"]?.isEmpty ?? true) {
+      _appsflyerSdk.getAppsFlyerUID().then((value) {
+        uid = value ?? "";
+        deviceData["afId"] = value ?? "";
+        UserRepository.uplaodDeviceInfo(deviceData).then((value) {
+          if (value == null) {
+            return;
+          }
+          SpUtil.putString(CacheConstants.isUploadedDeviceInfo, "true");
+        });
+      });
+
+      return;
+    }
+
     UserRepository.uplaodDeviceInfo(deviceData).then((value) {
       if (value == null) {
         return;
@@ -105,15 +129,13 @@ class AppLogic extends GetxController {
 
   Map<String, String> _readAndroidBuildData(
       AndroidDeviceInfo build, dynamic result) {
-    androidId = build.androidId;
     return <String, String>{
       'adrVersion': build.version.sdkInt.toString(),
       'channelId': "SmartLoan",
       'appName': "SmartLoan",
       'installReferce': "",
-      'afId': "",
+      'afId': uid,
       'packageName': "com.mmt.smartloan",
-      'androidId': build.androidId ?? "",
     };
   }
 

@@ -10,7 +10,7 @@ class RegisterState {
 
   Timer? timer;
   int seconds = 60;
-  String btnText = "Conseguir";
+  String btnText = "60";
 
   RegisterState() {
     ///Initialize variables

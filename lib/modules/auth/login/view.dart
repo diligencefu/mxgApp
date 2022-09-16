@@ -78,6 +78,8 @@ class LoginPage extends StatelessWidget {
                           width: 229.w,
                           child: TextField(
                             controller: state.controller1,
+                            keyboardType: TextInputType.phone,
+                            autofocus: true,
                             onChanged: (value) {
                               Get.find<AppLogic>()
                                   .logEvent("loginPhone_phoneInput");

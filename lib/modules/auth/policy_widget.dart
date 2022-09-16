@@ -79,7 +79,7 @@ class _PolicyWidgetState extends State<PolicyWidget> {
                 Get.toNamed(
                   Routes.webview,
                   arguments: {
-                    "url": "http://8.134.38.88:3003/#/provicy",
+                    "url": "http://8.134.38.88:3003/#/termsCondition",
                     "title": "Política De Privacidad",
                   },
                 );
@@ -98,7 +98,7 @@ class _PolicyWidgetState extends State<PolicyWidget> {
                 Get.toNamed(
                   Routes.webview,
                   arguments: {
-                    "url": "http://8.134.38.88:3003/#/termsCondition",
+                    "url": "http://8.134.38.88:3003/#/provicy",
                     "title": "Términos de Uso",
                   },
                 );

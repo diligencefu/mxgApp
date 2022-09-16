@@ -44,16 +44,22 @@ class LoginLogic extends GetxController {
   }
 
   submit() {
+    if (!state.agree.value) {
+      toast("no aceptar el término y condiciones");
+      return;
+    }
+
     Get.find<AppLogic>().logEvent("loginPhone_next");
     var phone = state.controller1.text;
     if (phone.isEmpty) {
-      toast("请输入手机号");
+      toast("número telefónico vacío");
       return;
     }
-    if (phone.length > 10) {
+    if (phone.length != 10) {
+      toast("Formato erróneo de número telefónico");
       return;
     }
-    EasyLoading.show();
+    // EasyLoading.show();
     UserRepository.checkPhone(phone).then((value1) {
       logger(value1);
       if (value1 == null) {

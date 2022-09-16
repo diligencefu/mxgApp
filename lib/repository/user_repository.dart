@@ -6,8 +6,10 @@ import 'package:flutter_quick/constants/cache.dart';
 import 'package:flutter_quick/http/dio_api.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sp_util/sp_util.dart';
 
+import '../logic.dart';
 import '../routes/routes.dart';
 import '../utils/helper.dart';
 
@@ -19,7 +21,7 @@ class UserRepository {
       'Accept': 'application/json, text/plain, */*',
       'packageName': 'com.mmt.smartloan',
       'appName': 'SmartLoan',
-      'afid': 'smartloan',
+      'afid': Get.find<AppLogic>().uid,
       'lang': 'es',
     };
     var request = http.Request(
@@ -86,8 +88,15 @@ class UserRepository {
 
   /// 发送验证码
   static Future sendSmsCode(dynamic phoneNumber, String type) async {
-    var resp = await DioApi.getInstance().post("security/getVerifyCode",
-        data: {"mobile": phoneNumber, "type": type});
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var old = packageInfo.version;
+
+    var resp = await DioApi.getInstance().post("security/getVerifyCode", data: {
+      "mobile": phoneNumber,
+      "type": type,
+      "versionCode": old,
+      "androidId": Get.find<AppLogic>().androidId
+    });
 
     if (resp.sucess) {
       return resp.data;
@@ -107,7 +116,7 @@ class UserRepository {
       'Accept': 'application/json, text/plain, */*',
       'packageName': 'com.mmt.smartloan',
       'appName': 'SmartLoan',
-      'afid': 'smartloan',
+      'afid': Get.find<AppLogic>().uid,
       'lang': 'es',
     };
     var request = http.Request(
@@ -159,7 +168,6 @@ class UserRepository {
     if (resp.sucess) {
       return resp.data;
     }
-    toast(resp.message);
     return null;
   }
 
@@ -172,20 +180,41 @@ class UserRepository {
     if (resp.sucess) {
       return resp.data;
     }
-    toast(resp.message);
     return null;
   }
 
+  /// 发送验证码
   static Future checkUpdate(Map<String, String> data) async {
-    var resp = await DioApi.getInstance().get(
-      'app/getNewVersion',
-      data: data,
+    // var resp = await DioApi.getInstance().post("security/login", data: data);
+
+    var headers = {
+      'Authorization': 'Bearer 02e59159144e4942a5ad3c9131e7a3ff',
+      'Content-Type': 'application/json; charset=utf-8',
+      'Accept': 'application/json, text/plain, */*',
+      'packageName': 'com.mmt.smartloan',
+      'appName': 'SmartLoan',
+      'afid': Get.find<AppLogic>().uid,
+      'lang': 'es',
+    };
+    var request = http.Request(
+      'GET',
+      Uri.parse(
+          '${Config.apiHost}app/getNewVersion?packageName=com.mmt.smartloan'),
     );
-    EasyLoading.dismiss();
-    if (resp.sucess) {
-      return resp.data;
+
+    request.bodyFields = data;
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    logger(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      var data = await response.stream.bytesToString();
+      var res = jsonDecode(data);
+      logger(res);
+      if (res["code"].toString() == "0") {
+        return res["data"];
+      } else {
+        return null;
+      }
     }
-    toast(resp.message);
-    return null;
   }
 }
